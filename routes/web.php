@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 //
 //Auth::routes();
 
-Route::get('/{any?}', function () {
+//Route::get('/{any?}', function () {
+//    return view('layouts.app');
+//})->where('any', '^(?!graphql\/?!graphql-playground\/)[\/\w\.\,-]*');
+Route::fallback(function (){
     return view('layouts.app');
-})->where('any', '^(?!graphql\/?!graphql-playground\/)[\/\w\.\,-]*');
+});

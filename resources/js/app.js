@@ -9,6 +9,7 @@ import Vue from 'vue'
 import Board from './Board'
 import apolloProvider from "./apollo.config";
 window.Vue = Vue;
+import router from './router'
 
 /**
  * The following block of code may be used to automatically register your
@@ -31,5 +32,6 @@ Vue.component('board', Board);
 
 const app = new Vue({
     el: '#app',
-    apolloProvider
+    apolloProvider,
+    router
 });

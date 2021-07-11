@@ -18,9 +18,11 @@
 </template>
 
 <script>
+import EventBus from "./EventBus";
 import List from "./components/List";
-import gql from "graphql-tag";
 import BoardQuery from './graphql/BoardWithCardLists.gql'
+import {EVENT_CARD_DELETE, EVENT_CARD_ADD, EVENT_CARD_UPDATE} from "./constant";
+
 export default {
     name: "Board",
     components: {List},
@@ -31,6 +33,30 @@ export default {
                 id: 1
             }
         }
+    },
+    created() {
+        EventBus.$on('updateQueryCache', (payload) => {
+            const data = payload.store.readQuery({
+                query:BoardQuery,
+                variables:{id: parseInt(this.board.id) }
+            });
+            let cardList =  data.board.cardLists.find(list => {
+                return list.id == payload.cardListId
+            })
+            switch (payload.type){
+                case EVENT_CARD_ADD:
+                    cardList.cards.push(payload.addCard)
+                    break
+                case EVENT_CARD_DELETE:
+                    cardList.cards.splice(payload.index, 1)
+                    break
+                case EVENT_CARD_UPDATE:
+                    cardList.cards.splice(payload.index, 1, payload.card)
+                    break
+            }
+
+            payload.store.writeQuery({query: BoardQuery, data})
+        })
     }
 }
 </script>

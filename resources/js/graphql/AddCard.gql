@@ -3,5 +3,11 @@ mutation($title: String!, $order: Int!, $cardListId: ID!, $userId: ID!) {
         id
         title
         order
+        cardList{
+            id
+            board{
+                id
+            }
+        }
     }
 }

@@ -3,19 +3,20 @@
         <div class="flex justify-between">
             <div class="text-gray-800 pl-2 pb-2 font-bold">{{cardList.title}}</div>
         </div>
-        <card v-for="(card, index) in cardList.cards" :key="index" :card="card"></card>
-        <card-add-button @addCard="isAdd=false" v-if="isAdd"></card-add-button>
-        <card-editor :boardId="cardList.board.id" :nextOrder="nextOrder" :cardListId="cardList.id" @cancelAddCard="isAdd=true" v-else></card-editor>
+        <card v-for="(card, index) in cardList.cards" :key="index" :card="card" :index="index"></card>
+        <card-add-button v-if="isAdd" @addCard="isAdd=false" ></card-add-button>
+        <card-add-editor v-else  :boardId="cardList.board.id" :nextOrder="nextOrder" :cardListId="cardList.id"></card-add-editor>
     </div>
 </template>
 
 <script>
 import Card from "./Card";
 import CardAddButton from "./CardAddButton";
-import CardEditor from "./CardEditor";
+import CardAddEditor from "./CardAddEditor";
+import EventBus from "../EventBus";
 export default {
     name: "List",
-    components: {Card, CardAddButton, CardEditor},
+    components: {Card, CardAddButton, CardAddEditor},
     props:['cardList'],
     data(){
         return {
@@ -27,6 +28,11 @@ export default {
             let n = this.cardList.cards.length
             return this.cardList.cards[n-1].order + 1
         }
+    },
+    created() {
+        EventBus.$on('cancelSaveCard', () => {
+            this.isAdd=true
+        })
     }
 }
 </script>

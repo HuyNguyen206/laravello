@@ -1,0 +1,13 @@
+mutation($id: ID!,$title: String){
+    updateCard(id: $id, title: $title){
+        id
+        title
+        order
+        cardList{
+            id
+            board{
+                id
+            }
+        }
+    }
+}
