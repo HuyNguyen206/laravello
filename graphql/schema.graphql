@@ -14,6 +14,17 @@ type Mutation{
     addCard(input: addCardInput! @spread): Card! @create
     deleteCard(id: ID!): Card @delete
     updateCard(id: ID!, title: String): Card @update
+    "Log in to a new session and get the user."
+    login(email: String!, password: String!): User!
+    "Log out from the current session, showing the user one last time."
+    logout: User @guard
+    register(
+        name: String! @rules(apply: ["required", "min:2"]),
+        email: String! @rules(apply:["unique:users", "email", "required"]),
+        password: String! @rules(apply: ["required", "min:8"]) @hash): User @create
+       @event(dispatch:  "Illuminate\\Auth\\Events\\Registered")
+#    register(input: registerUser @spread): User @create
+#    register(name: String!, email: String!, password: String! @hash): User @create
 }
 
 input addCardInput{
@@ -22,6 +33,14 @@ input addCardInput{
     card_list_id: ID!
     user_id: ID!
 }
+
+#input registerUser{
+#    name: String!
+#    email: String! @rules(apply:["unique:users"])
+##    password: String! @rules(apply:["confirmed"]) @hash
+#    password: String! @hash
+##    password_confirmation: String!
+#}
 type User {
     id: ID!
     name: String!

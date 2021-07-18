@@ -5,9 +5,13 @@ import VueApollo from 'vue-apollo'
 const apolloClient = new ApolloClient({
     uri:"http://laravello.com/graphql",
     headers: {
-        'X_CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
     },
-    credentials: 'include'
+    credentials: 'include',
+    onError: (err) => {
+        console.log(err)
+        console.log('Global handle')
+    }
 })
 
 Vue.use(VueApollo)

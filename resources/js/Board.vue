@@ -3,7 +3,17 @@
         <div class="header text-white flex justify-between items-center mb-2 bg-purple-600">
             <div class="ml-2 w-1/3">X</div>
             <div class="text-lg opacity-50 cursor-pointer hover:opacity-75">Laravello</div>
-            <div class="mr-2 w-1/3 text-right">X</div>
+            <div class="mr-2 w-1/3 text-right">
+                <div v-if="isLogin">
+                    <button class="header-btn" @click="logout">Logout</button>
+                </div>
+                <div v-else>
+                    <router-link class="header-btn" :to="{name: 'login'}">Login</router-link>
+                    <router-link class="header-btn" :to="{name: 'register'}">Register</router-link>
+<!--                    <button class="header-btn">Login</button>-->
+<!--                    <button class="header-btn">Register</button>-->
+                </div>
+            </div>
         </div>
         <div class="h-full flex flex-col flex-1">
             <div class="mx-4 mb-2 text-white font-bold text-lg">
@@ -21,8 +31,8 @@
 import EventBus from "./EventBus";
 import List from "./components/List";
 import BoardQuery from './graphql/BoardWithCardLists.gql'
+import LogoutMutation from './graphql/Logout.graphql'
 import {EVENT_CARD_DELETE, EVENT_CARD_ADD, EVENT_CARD_UPDATE} from "./constant";
-
 export default {
     name: "Board",
     components: {List},
@@ -32,6 +42,24 @@ export default {
             variables: {
                 id: 1
             }
+        }
+    },
+    computed:{
+        isLogin(){
+            return this.$store.state.isLogin
+        }
+    },
+    methods:{
+        async logout(){
+            try {
+                await this.$apollo.mutate({
+                    mutation: LogoutMutation
+                })
+                this.$store.dispatch('setLogin', false)
+            }catch (err){
+                console.log(err)
+            }
+
         }
     },
     created() {
