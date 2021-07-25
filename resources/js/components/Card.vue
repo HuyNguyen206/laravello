@@ -4,7 +4,7 @@
             <div>
                 {{ card.title }}
             </div>
-            <div class="flex group-hover:opacity-100 opacity-0 transition text-gray-400">
+            <div v-if="canUpdateOrDelete" class="flex group-hover:opacity-100 opacity-0 transition text-gray-400">
                 <div class="mr-1 hover:text-gray-800" @click="editCard">E</div>
                 <div class="hover:text-gray-800" @click="deleteCard">D</div>
             </div>
@@ -20,6 +20,7 @@ import {EVENT_CARD_DELETE} from "../constant";
 import {EVENT_CARD_UPDATE} from "../constant";
 import CardEditor from "./CardEditor";
 import UpdateCard from './../graphql/UpdateCard.graphql'
+import {mapState} from 'vuex'
 export default {
     name: "Card",
     components:{CardEditor},
@@ -29,6 +30,14 @@ export default {
           isEdit: false,
           title: this.card.title
       }
+    },
+    computed:{
+      ...mapState({
+          isLogin: 'isLogin',
+          canUpdateOrDelete(state){
+              return state.isLogin && this.card.owner.id == state.user?.id
+          }
+      })
     },
     methods:{
         updateCard(){

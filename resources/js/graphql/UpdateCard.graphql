@@ -3,6 +3,10 @@ mutation($id: ID!,$title: String){
         id
         title
         order
+        owner{
+            id
+            name
+        }
         cardList{
             id
             board{

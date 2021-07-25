@@ -37,9 +37,14 @@ const app = new Vue({
     router,
     store,
     beforeCreate(){
+        //Improve user experience while waiting the update from BE, get data from local storage
         const isLoginStorage = localStorage.getItem('isLogin');
-        console.log(isLoginStorage)
+        // console.log(isLoginStorage)
         const isLogin = isLoginStorage ? (isLoginStorage == "true" ? true : false) : false
         store.dispatch('setLogin', isLogin)
+        const currentUser = JSON.parse(localStorage.getItem('user'))
+        store.dispatch('setAuthUser', currentUser)
+
+        store.dispatch('updateCurrentLoginFromBE');
     }
 });

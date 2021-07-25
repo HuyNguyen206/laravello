@@ -1,0 +1,17 @@
+query($userId: ID!){
+    userBoards(user_id: $userId){
+        id
+        title
+        color
+        cardLists
+        {
+            id
+            title
+        }
+        owner{
+            id
+            name
+            email
+        }
+    }
+}

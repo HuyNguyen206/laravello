@@ -4,8 +4,10 @@
             <div class="text-gray-800 pl-2 pb-2 font-bold">{{cardList.title}}</div>
         </div>
         <card v-for="(card, index) in cardList.cards" :key="index" :card="card" :index="index"></card>
-        <card-add-button v-if="isAdd" @addCard="isAdd=false" ></card-add-button>
-        <card-add-editor v-else  :boardId="cardList.board.id" :nextOrder="nextOrder" :cardListId="cardList.id"></card-add-editor>
+        <div v-if="canAddCard">
+            <card-add-button v-if="isAdd" @addCard="isAdd=false" ></card-add-button>
+            <card-add-editor v-else  :boardId="cardList.board.id" :nextOrder="nextOrder" :cardListId="cardList.id"></card-add-editor>
+        </div>
     </div>
 </template>
 
@@ -14,6 +16,7 @@ import Card from "./Card";
 import CardAddButton from "./CardAddButton";
 import CardAddEditor from "./CardAddEditor";
 import EventBus from "../EventBus";
+import {mapState} from 'vuex'
 export default {
     name: "List",
     components: {Card, CardAddButton, CardAddEditor},
@@ -24,6 +27,11 @@ export default {
         }
     },
     computed:{
+        ...mapState({
+           canAddCard(state){
+               return state?.user?.id == this.cardList.board.owner.id
+           }
+        }),
         nextOrder(){
             let n = this.cardList.cards.length
             return this.cardList.cards[n-1].order + 1

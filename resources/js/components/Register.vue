@@ -52,10 +52,12 @@ export default {
     methods: {
         async register() {
             try {
-                await this.$apollo.mutate({
+              let user = await this.$apollo.mutate({
                     mutation: AddRegisterUser,
                     variables: this.user
                 })
+                this.$store.dispatch('setAuthUser', user.data.login)
+                this.$store.dispatch('setLogin', true)
                 this.errors = []
                 this.$store.dispatch('setLogin', true)
                 this.$router.push({name: 'board'})

@@ -10,6 +10,10 @@ query BoardWithCardLists($id: ID!){
                 id
                 title
                 order
+                owner{
+                   id
+                    name
+                }
                 cardList{
                     id
                     board{
@@ -20,6 +24,11 @@ query BoardWithCardLists($id: ID!){
             board{
                 id
                 title
+                owner{
+                    id
+                    name
+                    email
+                }
             }
         }
         owner{

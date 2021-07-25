@@ -22,10 +22,10 @@ class DatabaseSeeder extends Seeder
         ]);
         factory(User::class, 10)->create();
         $board1 = Board::create([
-            'title' => 'Groceries', 'color' => 'teal', 'user_id' => User::pluck('id')->random()
+            'title' => 'Groceries', 'color' => 'green', 'user_id' => User::pluck('id')->random()
         ]);
         $board2 = Board::create([
-            'title' => 'Housework', 'color' => 'orange', 'user_id' => User::pluck('id')->random()
+            'title' => 'Housework', 'color' => 'yellow', 'user_id' => User::pluck('id')->random()
         ]);
         $board3 = Board::create([
             'title' => 'Job', 'color' => 'indigo', 'user_id' => User::pluck('id')->random()

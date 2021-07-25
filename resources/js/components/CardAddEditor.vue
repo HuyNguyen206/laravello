@@ -7,6 +7,7 @@ import AddCardMutation from "../graphql/AddCard.gql";
 import EventBus from "../EventBus";
 import {EVENT_CARD_ADD} from "../constant";
 import CardEditor from "./CardEditor";
+import {mapState} from 'vuex'
 export default {
     name: "CardAddEditor",
     props: ['nextOrder', 'cardListId'],
@@ -15,6 +16,11 @@ export default {
         return {
             title: null
         }
+    },
+    computed:{
+      ...mapState({
+          user: state => state.user
+      })
     },
     methods: {
         addNewCard() {
@@ -25,7 +31,7 @@ export default {
                     title: this.title,
                     order: this.nextOrder,
                     cardListId: this.cardListId,
-                    userId: 1
+                    userId: this.user.id
                 },
                 update(store, {data: {addCard}}) {
                     EventBus.$emit('updateQueryCache', {
