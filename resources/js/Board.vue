@@ -42,7 +42,7 @@ import BoardQuery from './graphql/BoardWithCardLists.gql'
 import LogoutMutation from './graphql/Logout.graphql'
 import {EVENT_CARD_DELETE, EVENT_CARD_ADD, EVENT_CARD_UPDATE} from "./constant";
 import {mapState} from 'vuex'
-import {colorMap500} from './ultils'
+import {colorMap500, colorMap100, colorMap200} from './ultils'
 import UserBoardDropDown from "./components/UserBoardDropDown";
 export default {
     name: "Board",
@@ -62,6 +62,8 @@ export default {
             console.log('board',this.board)
                 return this.$apollo.loading ? 'bg-gray-500' : [colorMap500[this.board.color]]
         },
+        colorMap100: () => colorMap100,
+        colorMap200: () => colorMap200,
         ...mapState([
             'user',
             'isLogin'
