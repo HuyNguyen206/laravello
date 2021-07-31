@@ -1,8 +1,8 @@
 <template>
     <transition name="fade">
-        <div v-if="show" @click="$emit('close')" class="overlay fixed z-30 top-0 bottom-0 left-0 w-full h-full bg-black">
-            <div class="w-full h-full bg-transparent flex justify-center items-center">
-                <div @click.self="$emit('close')" class="text-white shadow-xl" :style="style" >
+        <div v-if="show"  class="overlay fixed z-30 top-0 bottom-0 left-0 w-full h-full bg-black">
+            <div @click.self="$emit('close')" class="w-full h-full bg-transparent flex justify-center items-center">
+                <div class="text-white" :style="style" >
                     <slot></slot>
                 </div>
             </div>
@@ -13,12 +13,11 @@
 <script>
 export default {
     name: "Modal",
-    props: ['width', 'height', 'show'],
+    props: ['width', 'show'],
     computed:{
         style(){
             return {
-                width: `${this.width}px`,
-                height: `${this.height}px`
+                width: `${this.width}px`
             }
         }
     }

@@ -46,7 +46,7 @@ export default {
                 EventBus.$emit('cancelSaveCard')
             })
         }
-    },
+    }
 }
 </script>
 

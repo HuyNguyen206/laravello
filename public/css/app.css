@@ -613,6 +613,11 @@ video {
   opacity: 0.75
 }
 
+.list{
+  width: 230px;
+  min-width: 230px;
+}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }

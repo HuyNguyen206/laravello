@@ -10,6 +10,11 @@ class Board extends Model
 {
     protected $guarded = [];
     //
+    protected static function booted(){
+        static::creating(function ($board){
+            $board->user_id = auth()->id();
+        });
+    }
     public function cardLists():HasMany
     {
         return $this->hasMany(CardList::class);

@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-300 rounded-sm mr-2 p-2 list">
+    <div class="list bg-gray-300 rounded-sm mr-2 p-2 list">
         <div class="flex justify-between">
             <div class="text-gray-800 pl-2 pb-2 font-bold">{{cardList.title}}</div>
         </div>

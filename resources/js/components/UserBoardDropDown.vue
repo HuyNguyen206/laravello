@@ -3,16 +3,18 @@
         <button class="header-btn" @click="isOpenBoardMenu = !isOpenBoardMenu">Boards</button>
         <drop-down-menu @close="isOpenBoardMenu = false" :show="isOpenBoardMenu">
             <div class="text-gray-600 text-xs font-semibold mb-1 ml-2">BOARDS</div>
-                <router-link v-for="(board, index) in userBoards" :key="index"
-                             :class="['bg-'+ board.color + '-100']"
-                             class="rounded-sm opacity-100 hover:opacity-75 transition text-gray-700 font-bold flex" :to="{name:'board', params:{id: board.id}}">
+            <router-link @click.native="isOpenBoardMenu = false" v-for="(board, index) in userBoards" :key="index"
+                         :class="['bg-'+ board.color + '-100']"
+                         class="rounded-sm opacity-100 hover:opacity-75 transition text-gray-700 font-bold flex"
+                         :to="{name:'board', params:{id: board.id}}">
                 <div :class="['bg-'+ board.color + '-200']" class="w-1/5 rounded-sm rounded-r-none"></div>
-                <div class="p-2 w-4/5">{{board.title}}</div>
-                </router-link>
-        <div class="rounded-sm hover:bg-gray-200 p-2 underline cursor-pointer mt-2" @click="isOpenBoardModal = true">Create new board...</div>
-        <modal @close="isOpenBoardModal=false" :show="isOpenBoardModal" width="300" height="300">
-            This is content of modal
-        </modal>
+                <div class="p-2 w-4/5">{{ board.title }}</div>
+            </router-link>
+            <div class="rounded-sm hover:bg-gray-200 p-2 underline cursor-pointer mt-2"
+                 @click="isOpenBoardModal = true;">Create new board...
+            </div>
+            <board-add-modal @modalClose="isOpenBoardModal=false"
+                             :isOpenBoardModal="isOpenBoardModal"></board-add-modal>
         </drop-down-menu>
     </div>
 </template>
@@ -20,10 +22,11 @@
 <script>
 import DropDownMenu from "./DropDownMenu";
 import UserBoards from './../graphql/UserBoards.graphql'
+import BoardAddModal from "./BoardAddModal";
 import {mapState} from 'vuex'
-import {colorMap500} from './../ultils'
-import Modal from "./Modal";
-
+import EventBus from "../EventBus";
+import BoardQuery from "../graphql/BoardWithCardLists.gql";
+import {EVENT_BOARD_ADD, EVENT_CARD_ADD, EVENT_CARD_DELETE, EVENT_CARD_UPDATE} from "../constant";
 
 export default {
     name: "UserBoardDropDown",
@@ -51,15 +54,32 @@ export default {
             query: UserBoards,
             variables() {
                 return {
-                    userId: this.userId
+                    userId: parseInt(this.userId)
                 }
             },
-            skip(){
+            skip() {
                 return !this.userId
             }
         }
     },
-    components: {DropDownMenu,Modal}
+    created() {
+        EventBus.$on('updateBoardQueryCache', (payload) => {
+            const data = payload.store.readQuery({
+                query: UserBoards,
+                variables: {userId: parseInt(this.userId)}
+            });
+            switch (payload.type) {
+                case EVENT_BOARD_ADD:
+                    data.userBoards.push(payload.addBoard)
+                    break
+            }
+            payload.store.writeQuery({
+                query: UserBoards, data,
+                variables: {userId: parseInt(this.userId)}
+            })
+        })
+    },
+    components: {DropDownMenu, BoardAddModal}
 }
 </script>
 

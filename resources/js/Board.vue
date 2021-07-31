@@ -3,7 +3,7 @@
         <div class="h-full flex flex-col" :class="[bgColor]">
             <div class="header text-white flex justify-between items-center mb-2">
                 <div class="ml-2 w-1/3">
-                <user-board-drop-down v-if="isLogin"></user-board-drop-down>
+                    <user-board-drop-down v-if="isLogin"></user-board-drop-down>
                 </div>
                 <div class="text-lg opacity-50 cursor-pointer hover:opacity-75">Laravello</div>
                 <div class="mr-2 w-1/3 text-right">
@@ -28,6 +28,7 @@
                 </div>
                 <div v-if="!$apollo.queries.board.loading" class="flex flex-1 items-start overflow-x-auto mx-2">
                     <list v-for="(cardList, index) in board.cardLists" :key="index" :cardList="cardList"></list>
+                    <list-add-editor></list-add-editor>
                 </div>
             </div>
         </div>
@@ -40,13 +41,14 @@ import EventBus from "./EventBus";
 import List from "./components/List";
 import BoardQuery from './graphql/BoardWithCardLists.gql'
 import LogoutMutation from './graphql/Logout.graphql'
-import {EVENT_CARD_DELETE, EVENT_CARD_ADD, EVENT_CARD_UPDATE} from "./constant";
+import {EVENT_CARD_DELETE, EVENT_CARD_ADD, EVENT_CARD_UPDATE, EVENT_BOARD_ADD} from "./constant";
 import {mapState} from 'vuex'
 import {colorMap500, colorMap100, colorMap200} from './ultils'
 import UserBoardDropDown from "./components/UserBoardDropDown";
+import ListAddEditor from "./components/ListAddEditor";
 export default {
     name: "Board",
-    components: {UserBoardDropDown, List},
+    components: {UserBoardDropDown, List, ListAddEditor},
     apollo: {
         board: {
             query: BoardQuery,
@@ -58,9 +60,9 @@ export default {
         }
     },
     computed: {
-        bgColor(){
-            console.log('board',this.board)
-                return this.$apollo.loading ? 'bg-gray-500' : [colorMap500[this.board.color]]
+        bgColor() {
+            console.log('board', this.board)
+            return this.$apollo.loading ? 'bg-gray-500' : [colorMap500[this.board.color]]
         },
         colorMap100: () => colorMap100,
         colorMap200: () => colorMap200,
@@ -94,9 +96,9 @@ export default {
                 query: BoardQuery,
                 variables: {id: parseInt(this.board.id)}
             });
-            let cardList = data.board.cardLists.find(list => {
-                return list.id == payload.cardListId
-            })
+                let cardList = data.board.cardLists.find(list => {
+                    return list.id == payload.cardListId
+                })
             switch (payload.type) {
                 case EVENT_CARD_ADD:
                     cardList.cards.push(payload.addCard)
@@ -109,7 +111,7 @@ export default {
                     break
             }
 
-            payload.store.writeQuery({query: BoardQuery, data})
+            payload.store.writeQuery({query: BoardQuery, data, variables: {id: parseInt(this.board.id)}})
         })
     }
 }

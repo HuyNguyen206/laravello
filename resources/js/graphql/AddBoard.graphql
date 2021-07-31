@@ -1,0 +1,41 @@
+# Write your query or mutation here
+mutation($title: String!, $color: String!){
+    addBoard(title: $title, color: $color){
+        id
+        title
+        color
+        cardLists{
+            id
+            title
+            cards{
+                id
+                title
+                order
+                owner{
+                    id
+                    name
+                }
+                cardList{
+                    id
+                    board{
+                        id
+                    }
+                }
+            }
+            board{
+                id
+                title
+                owner{
+                    id
+                    name
+                    email
+                }
+            }
+        }
+        owner{
+            id
+            name
+            email
+        }
+    }
+}
