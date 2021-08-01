@@ -10,17 +10,18 @@ const apolloClient = new ApolloClient({
     },
     credentials: 'include',
     onError: (err) => {
+        console.log('err log')
         console.log(err)
         try {
             gqlErrors(err)
         }catch (error){
+            alert(error)
            if(error instanceof AuthError){
-               console.log('error', error)
-               alert(error)
                    store.dispatch('setLogin', false)
                    store.dispatch('setAuthUser', null)
                    location.href = '/login'
            }
+
         }
 
         console.log('Global handle')

@@ -14,6 +14,7 @@ type Query {
 
 type Mutation{
     addCard(input: addCardInput! @spread): Card! @create @can(ability: "createCard", model: "App\\CardList", find: "card_list_id")
+    addCardList(title: String!, board_id: ID!): CardList @guard @create @can(ability: "createCardList", model: "App\\Board", find: "board_id")
     addBoard(title: String!, color: String!): Board @create @guard
     deleteCard(id: ID!): Card @delete @can(ability: "delete", find: "id")
     updateCard(id: ID!, title: String): Card @update @can(ability: "update", find: "id")

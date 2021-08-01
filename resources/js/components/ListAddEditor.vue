@@ -11,9 +11,12 @@
 <script>
 import CardEditor from "./CardEditor";
 import EventBus from "../EventBus";
+import AddCardList from '../graphql/AddCardList.graphql'
+import {EVENT_CARDLIST_ADD} from "../constant";
 export default {
     name: "ListAddEditor",
     components:{CardEditor},
+    props:['boardId'],
     data() {
         return {
             isListCreate: false,
@@ -22,7 +25,23 @@ export default {
     },
     methods:{
         addNewCardList(){
-
+            this.$apollo.mutate({
+                mutation:AddCardList,
+                variables:{
+                    title: this.title,
+                    boardId: this.boardId
+                },
+                update(store,{data: {addCardList}}){
+                    EventBus.$emit('updateQueryCache', {
+                        type: EVENT_CARDLIST_ADD,
+                        store,
+                        addCardList
+                    })
+                }
+            }).then(data => {
+                this.isListCreate=false;
+                this.title=null
+            })
         }
     },
     created() {

@@ -6,6 +6,9 @@ export function gqlErrors(err){
    if(err?.networkError && err.networkError.statusCode == 419){
        throw new AuthError('Unauthenticated')
    }
+    if(err?.graphQLErrors && err.graphQLErrors[0]?.extensions && err.graphQLErrors[0].extensions?.category == 'authorization'){
+        throw new UnauthorizeError(err.graphQLErrors[0].message)
+    }
     return replaceInternal(err?.graphQLErrors?.map((e) => {
         let message = ''
         let validationObject = {...e.extensions.validation};
@@ -28,6 +31,9 @@ export function gqlErrors(err){
 }
 
 export class AuthError extends Error {
+
+}
+export class UnauthorizeError extends Error {
 
 }
 

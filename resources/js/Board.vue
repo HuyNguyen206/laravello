@@ -28,7 +28,7 @@
                 </div>
                 <div v-if="!$apollo.queries.board.loading" class="flex flex-1 items-start overflow-x-auto mx-2">
                     <list v-for="(cardList, index) in board.cardLists" :key="index" :cardList="cardList"></list>
-                    <list-add-editor></list-add-editor>
+                    <list-add-editor :boardId="$route.params.id"></list-add-editor>
                 </div>
             </div>
         </div>
@@ -41,13 +41,18 @@ import EventBus from "./EventBus";
 import List from "./components/List";
 import BoardQuery from './graphql/BoardWithCardLists.gql'
 import LogoutMutation from './graphql/Logout.graphql'
-import {EVENT_CARD_DELETE, EVENT_CARD_ADD, EVENT_CARD_UPDATE, EVENT_BOARD_ADD} from "./constant";
+import {EVENT_CARD_DELETE, EVENT_CARD_ADD, EVENT_CARD_UPDATE, EVENT_CARDLIST_ADD} from "./constant";
 import {mapState} from 'vuex'
 import {colorMap500, colorMap100, colorMap200} from './ultils'
 import UserBoardDropDown from "./components/UserBoardDropDown";
 import ListAddEditor from "./components/ListAddEditor";
 export default {
     name: "Board",
+    // data(){
+    //     return{
+    //         board:{}
+    //     }
+    // },
     components: {UserBoardDropDown, List, ListAddEditor},
     apollo: {
         board: {
@@ -90,15 +95,26 @@ export default {
         }
     },
     created() {
-
+        // if(this.$route.name == 'board'){
+        //   let result = await this.$apollo.query({
+        //         query:BoardQuery,
+        //         variables:{
+        //            id:parseInt(this.$route.params.id)
+        //         }
+        //     })
+        //
+        // }
         EventBus.$on('updateQueryCache', (payload) => {
             const data = payload.store.readQuery({
                 query: BoardQuery,
                 variables: {id: parseInt(this.board.id)}
             });
-                let cardList = data.board.cardLists.find(list => {
+            let cardList
+            if(payload.type !== EVENT_CARDLIST_ADD){
+                 cardList = data.board.cardLists.find(list => {
                     return list.id == payload.cardListId
                 })
+            }
             switch (payload.type) {
                 case EVENT_CARD_ADD:
                     cardList.cards.push(payload.addCard)
@@ -108,6 +124,9 @@ export default {
                     break
                 case EVENT_CARD_UPDATE:
                     cardList.cards.splice(payload.index, 1, payload.card)
+                    break
+                case EVENT_CARDLIST_ADD:
+                    data.board.cardLists.push(payload.addCardList)
                     break
             }
 

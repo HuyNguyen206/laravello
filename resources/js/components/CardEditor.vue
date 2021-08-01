@@ -1,6 +1,7 @@
 <template>
     <div>
-    <textarea v-bind:value="value"
+    <textarea v-on-clickaway="cancel"
+              v-bind:value="value"
               v-on:input="$emit('input', $event.target.value)"
               @keyup.esc="cancel" @keyup.enter="$emit('saveCard')" ref="card" class="shadow-card rounded-md py-1 px-2 outline-none
  w-full text-gray-900 text-sm bg-white h-16 resize-none"
@@ -19,9 +20,13 @@
 </template>
 
 <script>
+import { directive as onClickaway } from 'vue-clickaway';
 import EventBus from "../EventBus";
 
 export default {
+    directives: {
+        onClickaway: onClickaway,
+    },
     name: "CardEditor",
     props: ['value'],
     methods: {

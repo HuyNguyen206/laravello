@@ -28,7 +28,6 @@ import AddBoard from './../graphql/AddBoard.graphql'
 import {mapState} from 'vuex'
 import {colorGrid, colorMap500, colorMap200} from './../ultils';
 import EventBus from "../EventBus";
-import {EVENT_BOARD_ADD} from "../constant";
 
 export default {
     data() {

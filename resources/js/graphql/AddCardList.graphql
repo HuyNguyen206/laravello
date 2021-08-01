@@ -1,0 +1,31 @@
+# Write your query or mutation here
+mutation($title: String!, $boardId: ID!){
+    addCardList(title: $title, board_id: $boardId){
+        id
+        title
+        cards{
+            id
+            title
+            order
+            owner{
+                id
+                name
+            }
+            cardList{
+                id
+                board{
+                    id
+                }
+            }
+        }
+        board{
+            id
+            title
+            owner{
+                id
+                name
+                email
+            }
+        }
+    }
+}

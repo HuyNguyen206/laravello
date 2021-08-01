@@ -34,7 +34,7 @@ export default {
         }),
         nextOrder(){
             let n = this.cardList.cards.length
-            return this.cardList.cards[n-1].order + 1
+            return n > 0 ? this.cardList.cards[n-1].order + 1 : 1
         }
     },
     created() {

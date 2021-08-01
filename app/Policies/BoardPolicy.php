@@ -92,4 +92,8 @@ class BoardPolicy
     {
         //
     }
+
+    public function createCardList(User $user, Board $board){
+        return $user->boards->contains($board);
+    }
 }

@@ -6761,6 +6761,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Board",
+  // data(){
+  //     return{
+  //         board:{}
+  //     }
+  // },
   components: {
     UserBoardDropDown: _components_UserBoardDropDown__WEBPACK_IMPORTED_MODULE_8__["default"],
     List: _components_List__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -6841,6 +6846,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     var _this2 = this;
 
+    // if(this.$route.name == 'board'){
+    //   let result = await this.$apollo.query({
+    //         query:BoardQuery,
+    //         variables:{
+    //            id:parseInt(this.$route.params.id)
+    //         }
+    //     })
+    //
+    // }
     _EventBus__WEBPACK_IMPORTED_MODULE_1__["default"].$on('updateQueryCache', function (payload) {
       var data = payload.store.readQuery({
         query: _graphql_BoardWithCardLists_gql__WEBPACK_IMPORTED_MODULE_3___default.a,
@@ -6848,9 +6862,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           id: parseInt(_this2.board.id)
         }
       });
-      var cardList = data.board.cardLists.find(function (list) {
-        return list.id == payload.cardListId;
-      });
+      var cardList;
+
+      if (payload.type !== _constant__WEBPACK_IMPORTED_MODULE_5__["EVENT_CARDLIST_ADD"]) {
+        cardList = data.board.cardLists.find(function (list) {
+          return list.id == payload.cardListId;
+        });
+      }
 
       switch (payload.type) {
         case _constant__WEBPACK_IMPORTED_MODULE_5__["EVENT_CARD_ADD"]:
@@ -6863,6 +6881,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         case _constant__WEBPACK_IMPORTED_MODULE_5__["EVENT_CARD_UPDATE"]:
           cardList.cards.splice(payload.index, 1, payload.card);
+          break;
+
+        case _constant__WEBPACK_IMPORTED_MODULE_5__["EVENT_CARDLIST_ADD"]:
+          data.board.cardLists.push(payload.addCardList);
           break;
       }
 
@@ -6895,7 +6917,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _ultils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../ultils */ "./resources/js/ultils.js");
 /* harmony import */ var _EventBus__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../EventBus */ "./resources/js/EventBus.js");
-/* harmony import */ var _constant__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../constant */ "./resources/js/constant.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -6925,7 +6946,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-
 
 
 
@@ -6984,7 +7004,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         update: function update(store, _ref) {
           var addBoard = _ref.data.addBoard;
           _EventBus__WEBPACK_IMPORTED_MODULE_5__["default"].$emit('updateBoardQueryCache', {
-            type: _constant__WEBPACK_IMPORTED_MODULE_6__["EVENT_BOARD_ADD"],
+            type: EVENT_BOARD_ADD,
             store: store,
             addBoard: addBoard
           });
@@ -7265,7 +7285,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _EventBus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../EventBus */ "./resources/js/EventBus.js");
+/* harmony import */ var vue_clickaway__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-clickaway */ "./node_modules/vue-clickaway/dist/vue-clickaway.common.js");
+/* harmony import */ var vue_clickaway__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_clickaway__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _EventBus__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../EventBus */ "./resources/js/EventBus.js");
+//
 //
 //
 //
@@ -7287,12 +7310,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  directives: {
+    onClickaway: vue_clickaway__WEBPACK_IMPORTED_MODULE_0__["directive"]
+  },
   name: "CardEditor",
   props: ['value'],
   methods: {
     cancel: function cancel() {
-      _EventBus__WEBPACK_IMPORTED_MODULE_0__["default"].$emit('cancelSaveCard');
+      _EventBus__WEBPACK_IMPORTED_MODULE_1__["default"].$emit('cancelSaveCard');
     }
   },
   mounted: function mounted() {
@@ -7421,7 +7448,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   })), {}, {
     nextOrder: function nextOrder() {
       var n = this.cardList.cards.length;
-      return this.cardList.cards[n - 1].order + 1;
+      return n > 0 ? this.cardList.cards[n - 1].order + 1 : 1;
     }
   }),
   created: function created() {
@@ -7446,6 +7473,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _CardEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CardEditor */ "./resources/js/components/CardEditor.vue");
 /* harmony import */ var _EventBus__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../EventBus */ "./resources/js/EventBus.js");
+/* harmony import */ var _graphql_AddCardList_graphql__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../graphql/AddCardList.graphql */ "./resources/js/graphql/AddCardList.graphql");
+/* harmony import */ var _graphql_AddCardList_graphql__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_graphql_AddCardList_graphql__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _constant__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../constant */ "./resources/js/constant.js");
 //
 //
 //
@@ -7456,6 +7486,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -7463,6 +7495,7 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     CardEditor: _CardEditor__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
+  props: ['boardId'],
   data: function data() {
     return {
       isListCreate: false,
@@ -7470,14 +7503,35 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    addNewCardList: function addNewCardList() {}
+    addNewCardList: function addNewCardList() {
+      var _this = this;
+
+      this.$apollo.mutate({
+        mutation: _graphql_AddCardList_graphql__WEBPACK_IMPORTED_MODULE_2___default.a,
+        variables: {
+          title: this.title,
+          boardId: this.boardId
+        },
+        update: function update(store, _ref) {
+          var addCardList = _ref.data.addCardList;
+          _EventBus__WEBPACK_IMPORTED_MODULE_1__["default"].$emit('updateQueryCache', {
+            type: _constant__WEBPACK_IMPORTED_MODULE_3__["EVENT_CARDLIST_ADD"],
+            store: store,
+            addCardList: addCardList
+          });
+        }
+      }).then(function (data) {
+        _this.isListCreate = false;
+        _this.title = null;
+      });
+    }
   },
   created: function created() {
-    var _this = this;
+    var _this2 = this;
 
     _EventBus__WEBPACK_IMPORTED_MODULE_1__["default"].$on('cancelSaveCard', function () {
-      _this.isListCreate = false;
-      _this.title = null;
+      _this2.isListCreate = false;
+      _this2.title = null;
     });
   }
 });
@@ -7774,9 +7828,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _BoardAddModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BoardAddModal */ "./resources/js/components/BoardAddModal.vue");
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _EventBus__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../EventBus */ "./resources/js/EventBus.js");
-/* harmony import */ var _graphql_BoardWithCardLists_gql__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../graphql/BoardWithCardLists.gql */ "./resources/js/graphql/BoardWithCardLists.gql");
-/* harmony import */ var _graphql_BoardWithCardLists_gql__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_graphql_BoardWithCardLists_gql__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _constant__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../constant */ "./resources/js/constant.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -7804,8 +7855,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-
-
 
 
 
@@ -7856,7 +7905,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
 
       switch (payload.type) {
-        case _constant__WEBPACK_IMPORTED_MODULE_6__["EVENT_BOARD_ADD"]:
+        case EVENT_BOARD_ADD:
           data.userBoards.push(payload.addBoard);
           break;
       }
@@ -49101,7 +49150,9 @@ var render = function() {
                   })
                 }),
                 _vm._v(" "),
-                _c("list-add-editor")
+                _c("list-add-editor", {
+                  attrs: { boardId: _vm.$route.params.id }
+                })
               ],
               2
             )
@@ -49425,6 +49476,14 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("textarea", {
+      directives: [
+        {
+          name: "on-clickaway",
+          rawName: "v-on-clickaway",
+          value: _vm.cancel,
+          expression: "cancel"
+        }
+      ],
       ref: "card",
       staticClass:
         "shadow-card rounded-md py-1 px-2 outline-none\nw-full text-gray-900 text-sm bg-white h-16 resize-none",
@@ -67643,14 +67702,15 @@ var apolloClient = new apollo_boost__WEBPACK_IMPORTED_MODULE_1__["default"]({
   },
   credentials: 'include',
   onError: function onError(err) {
+    console.log('err log');
     console.log(err);
 
     try {
       Object(_ultils_js__WEBPACK_IMPORTED_MODULE_4__["gqlErrors"])(err);
     } catch (error) {
+      alert(error);
+
       if (error instanceof _ultils_js__WEBPACK_IMPORTED_MODULE_4__["AuthError"]) {
-        console.log('error', error);
-        alert(error);
         _vuex_config__WEBPACK_IMPORTED_MODULE_3__["default"].dispatch('setLogin', false);
         _vuex_config__WEBPACK_IMPORTED_MODULE_3__["default"].dispatch('setAuthUser', null);
         location.href = '/login';
@@ -68827,7 +68887,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************!*\
   !*** ./resources/js/constant.js ***!
   \**********************************/
-/*! exports provided: EVENT_CARD_ADD, EVENT_CARD_DELETE, EVENT_CARD_UPDATE, EVENT_BOARD_ADD */
+/*! exports provided: EVENT_CARD_ADD, EVENT_CARD_DELETE, EVENT_CARD_UPDATE, EVENT_CARDLIST_ADD */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -68835,11 +68895,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_CARD_ADD", function() { return EVENT_CARD_ADD; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_CARD_DELETE", function() { return EVENT_CARD_DELETE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_CARD_UPDATE", function() { return EVENT_CARD_UPDATE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_BOARD_ADD", function() { return EVENT_BOARD_ADD; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_CARDLIST_ADD", function() { return EVENT_CARDLIST_ADD; });
 var EVENT_CARD_ADD = 'EVENT_CARD_ADD';
 var EVENT_CARD_DELETE = 'EVENT_CARD_DELETE';
 var EVENT_CARD_UPDATE = 'EVENT_CARD_UPDATE';
-var EVENT_BOARD_ADD = 'EVENT_BOARD_ADD';
+var EVENT_CARDLIST_ADD = 'EVENT_CARDLIST_ADD';
 
 /***/ }),
 
@@ -68984,6 +69044,137 @@ var EVENT_BOARD_ADD = 'EVENT_BOARD_ADD';
 
     var doc = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"title"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},"directives":[]},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},"directives":[]},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cardListId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}},"directives":[]},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addCard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"title"},"value":{"kind":"Variable","name":{"kind":"Name","value":"title"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"card_list_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cardListId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"user_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"title"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"order"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"owner"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]}]}},{"kind":"Field","name":{"kind":"Name","value":"cardList"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"board"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]}]}}]}}]}}]}}],"loc":{"start":0,"end":369}};
     doc.loc.source = {"body":"mutation($title: String!, $order: Int!, $cardListId: ID!, $userId: ID!) {\n    addCard(input: {title: $title, order: $order, card_list_id:$cardListId, user_id: $userId}){\n        id\n        title\n        order\n        owner{\n            id\n            name\n        }\n        cardList{\n            id\n            board{\n                id\n            }\n        }\n    }\n}\n","name":"GraphQL request","locationOffset":{"line":1,"column":1}};
+  
+
+    var names = {};
+    function unique(defs) {
+      return defs.filter(
+        function(def) {
+          if (def.kind !== 'FragmentDefinition') return true;
+          var name = def.name.value
+          if (names[name]) {
+            return false;
+          } else {
+            names[name] = true;
+            return true;
+          }
+        }
+      )
+    }
+  
+
+    // Collect any fragment/type references from a node, adding them to the refs Set
+    function collectFragmentReferences(node, refs) {
+      if (node.kind === "FragmentSpread") {
+        refs.add(node.name.value);
+      } else if (node.kind === "VariableDefinition") {
+        var type = node.type;
+        if (type.kind === "NamedType") {
+          refs.add(type.name.value);
+        }
+      }
+
+      if (node.selectionSet) {
+        node.selectionSet.selections.forEach(function(selection) {
+          collectFragmentReferences(selection, refs);
+        });
+      }
+
+      if (node.variableDefinitions) {
+        node.variableDefinitions.forEach(function(def) {
+          collectFragmentReferences(def, refs);
+        });
+      }
+
+      if (node.definitions) {
+        node.definitions.forEach(function(def) {
+          collectFragmentReferences(def, refs);
+        });
+      }
+    }
+
+    var definitionRefs = {};
+    (function extractReferences() {
+      doc.definitions.forEach(function(def) {
+        if (def.name) {
+          var refs = new Set();
+          collectFragmentReferences(def, refs);
+          definitionRefs[def.name.value] = refs;
+        }
+      });
+    })();
+
+    function findOperation(doc, name) {
+      for (var i = 0; i < doc.definitions.length; i++) {
+        var element = doc.definitions[i];
+        if (element.name && element.name.value == name) {
+          return element;
+        }
+      }
+    }
+
+    function oneQuery(doc, operationName) {
+      // Copy the DocumentNode, but clear out the definitions
+      var newDoc = {
+        kind: doc.kind,
+        definitions: [findOperation(doc, operationName)]
+      };
+      if (doc.hasOwnProperty("loc")) {
+        newDoc.loc = doc.loc;
+      }
+
+      // Now, for the operation we're running, find any fragments referenced by
+      // it or the fragments it references
+      var opRefs = definitionRefs[operationName] || new Set();
+      var allRefs = new Set();
+      var newRefs = new Set();
+
+      // IE 11 doesn't support "new Set(iterable)", so we add the members of opRefs to newRefs one by one
+      opRefs.forEach(function(refName) {
+        newRefs.add(refName);
+      });
+
+      while (newRefs.size > 0) {
+        var prevRefs = newRefs;
+        newRefs = new Set();
+
+        prevRefs.forEach(function(refName) {
+          if (!allRefs.has(refName)) {
+            allRefs.add(refName);
+            var childRefs = definitionRefs[refName] || new Set();
+            childRefs.forEach(function(childRef) {
+              newRefs.add(childRef);
+            });
+          }
+        });
+      }
+
+      allRefs.forEach(function(refName) {
+        var op = findOperation(doc, refName);
+        if (op) {
+          newDoc.definitions.push(op);
+        }
+      });
+
+      return newDoc;
+    }
+    
+    module.exports = doc;
+    
+
+
+/***/ }),
+
+/***/ "./resources/js/graphql/AddCardList.graphql":
+/*!**************************************************!*\
+  !*** ./resources/js/graphql/AddCardList.graphql ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+    var doc = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"title"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},"directives":[]},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"boardId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addCardList"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"title"},"value":{"kind":"Variable","name":{"kind":"Name","value":"title"}}},{"kind":"Argument","name":{"kind":"Name","value":"board_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"boardId"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"title"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"cards"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"title"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"order"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"owner"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]}]}},{"kind":"Field","name":{"kind":"Name","value":"cardList"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"board"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"board"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"title"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"owner"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"email"},"arguments":[],"directives":[]}]}}]}}]}}]}}],"loc":{"start":0,"end":584}};
+    doc.loc.source = {"body":"# Write your query or mutation here\nmutation($title: String!, $boardId: ID!){\n    addCardList(title: $title, board_id: $boardId){\n        id\n        title\n        cards{\n            id\n            title\n            order\n            owner{\n                id\n                name\n            }\n            cardList{\n                id\n                board{\n                    id\n                }\n            }\n        }\n        board{\n            id\n            title\n            owner{\n                id\n                name\n                email\n            }\n        }\n    }\n}\n","name":"GraphQL request","locationOffset":{"line":1,"column":1}};
   
 
     var names = {};
@@ -70203,13 +70394,14 @@ var routes = [{
 /*!********************************!*\
   !*** ./resources/js/ultils.js ***!
   \********************************/
-/*! exports provided: gqlErrors, AuthError, colorMap500, colorMap100, colorMap200, colorGrid */
+/*! exports provided: gqlErrors, AuthError, UnauthorizeError, colorMap500, colorMap100, colorMap200, colorGrid */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gqlErrors", function() { return gqlErrors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthError", function() { return AuthError; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnauthorizeError", function() { return UnauthorizeError; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "colorMap500", function() { return colorMap500; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "colorMap100", function() { return colorMap100; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "colorMap200", function() { return colorMap200; });
@@ -70245,7 +70437,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function gqlErrors(err) {
-  var _err$graphQLErrors;
+  var _err$graphQLErrors$, _err$graphQLErrors$0$, _err$graphQLErrors;
 
   var hasInternal = function hasInternal(errors) {
     return errors.some(function (e) {
@@ -70261,6 +70453,10 @@ function gqlErrors(err) {
 
   if (err !== null && err !== void 0 && err.networkError && err.networkError.statusCode == 419) {
     throw new AuthError('Unauthenticated');
+  }
+
+  if (err !== null && err !== void 0 && err.graphQLErrors && (_err$graphQLErrors$ = err.graphQLErrors[0]) !== null && _err$graphQLErrors$ !== void 0 && _err$graphQLErrors$.extensions && ((_err$graphQLErrors$0$ = err.graphQLErrors[0].extensions) === null || _err$graphQLErrors$0$ === void 0 ? void 0 : _err$graphQLErrors$0$.category) == 'authorization') {
+    throw new UnauthorizeError(err.graphQLErrors[0].message);
   }
 
   return replaceInternal((err === null || err === void 0 ? void 0 : (_err$graphQLErrors = err.graphQLErrors) === null || _err$graphQLErrors === void 0 ? void 0 : _err$graphQLErrors.map(function (e) {
@@ -70298,6 +70494,19 @@ var AuthError = /*#__PURE__*/function (_Error) {
   }
 
   return AuthError;
+}( /*#__PURE__*/_wrapNativeSuper(Error));
+var UnauthorizeError = /*#__PURE__*/function (_Error2) {
+  _inherits(UnauthorizeError, _Error2);
+
+  var _super2 = _createSuper(UnauthorizeError);
+
+  function UnauthorizeError() {
+    _classCallCheck(this, UnauthorizeError);
+
+    return _super2.apply(this, arguments);
+  }
+
+  return UnauthorizeError;
 }( /*#__PURE__*/_wrapNativeSuper(Error));
 var colorMap500 = {
   pink: "bg-pink-500",

@@ -25,8 +25,6 @@ import UserBoards from './../graphql/UserBoards.graphql'
 import BoardAddModal from "./BoardAddModal";
 import {mapState} from 'vuex'
 import EventBus from "../EventBus";
-import BoardQuery from "../graphql/BoardWithCardLists.gql";
-import {EVENT_BOARD_ADD, EVENT_CARD_ADD, EVENT_CARD_DELETE, EVENT_CARD_UPDATE} from "../constant";
 
 export default {
     name: "UserBoardDropDown",
