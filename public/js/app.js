@@ -6750,6 +6750,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -6761,11 +6762,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Board",
-  // data(){
-  //     return{
-  //         board:{}
-  //     }
-  // },
+  data: function data() {
+    return {
+      error: null
+    };
+  },
   components: {
     UserBoardDropDown: _components_UserBoardDropDown__WEBPACK_IMPORTED_MODULE_8__["default"],
     List: _components_List__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -6781,6 +6782,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       },
       skip: function skip() {
         return this.isHomeRoute;
+      },
+      error: function error(_error) {
+        this.error = _error.graphQLErrors[0].message;
+        console.log('board log', _error.graphQLErrors);
+      },
+      update: function update(data) {
+        this.error = null;
+        return data.board;
       }
     }
   },
@@ -6789,8 +6798,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return this.$route.name == 'home';
     },
     bgColor: function bgColor() {
+      var _this$board;
+
       console.log('board', this.board);
-      return !this.isHomeRoute ? this.$apollo.loading ? 'bg-gray-500' : [_ultils__WEBPACK_IMPORTED_MODULE_7__["colorMap500"][this.board.color]] : 'bg-green-500';
+      return !this.isHomeRoute ? this.$apollo.loading ? 'bg-gray-500' : [_ultils__WEBPACK_IMPORTED_MODULE_7__["colorMap500"][((_this$board = this.board) === null || _this$board === void 0 ? void 0 : _this$board.color) || "red"]] : 'bg-green-500';
     },
     colorMap100: function colorMap100() {
       return _ultils__WEBPACK_IMPORTED_MODULE_7__["colorMap100"];
@@ -49147,11 +49158,15 @@ var render = function() {
               [
                 _vm.$apollo.queries.board.loading
                   ? _c("span", [_vm._v("Loading...")])
-                  : _c("span", [_vm._v(_vm._s(_vm.board.title))])
+                  : _vm.board
+                  ? _c("span", [_vm._v(_vm._s(_vm.board.title))])
+                  : _vm.error
+                  ? _c("span", [_vm._v(_vm._s(_vm.error))])
+                  : _vm._e()
               ]
             ),
             _vm._v(" "),
-            !_vm.$apollo.queries.board.loading
+            !_vm.$apollo.queries.board.loading && !_vm.error
               ? _c(
                   "div",
                   {

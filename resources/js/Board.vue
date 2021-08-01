@@ -24,9 +24,10 @@
             <div class="h-full flex flex-col flex-1" v-if="!isHomeRoute && isLogin">
                 <div class="mx-4 mb-2 text-white font-bold text-lg">
                     <span v-if="$apollo.queries.board.loading">Loading...</span>
-                    <span v-else>{{ board.title }}</span>
+                    <span v-else-if="board">{{ board.title }}</span>
+                    <span v-else-if="error">{{ error }}</span>
                 </div>
-                <div v-if="!$apollo.queries.board.loading" class="flex flex-1 items-start overflow-x-auto mx-2">
+                <div v-if="!$apollo.queries.board.loading && !error" class="flex flex-1 items-start overflow-x-auto mx-2">
                     <list v-for="(cardList, index) in board.cardLists" :key="index" :cardList="cardList"></list>
                     <list-add-editor :boardId="$route.params.id"></list-add-editor>
                 </div>
@@ -48,11 +49,11 @@ import UserBoardDropDown from "./components/UserBoardDropDown";
 import ListAddEditor from "./components/ListAddEditor";
 export default {
     name: "Board",
-    // data(){
-    //     return{
-    //         board:{}
-    //     }
-    // },
+    data(){
+        return{
+            error: null
+        }
+    },
     components: {UserBoardDropDown, List, ListAddEditor},
     apollo: {
         board: {
@@ -64,6 +65,14 @@ export default {
             },
             skip(){
                 return this.isHomeRoute
+            },
+            error(error){
+                this.error = error.graphQLErrors[0].message
+                console.log('board log', error.graphQLErrors)
+            },
+            update(data){
+                this.error = null
+                return data.board
             }
         }
     },
@@ -74,7 +83,7 @@ export default {
         bgColor() {
             console.log('board', this.board)
             return !this.isHomeRoute ?
-                this.$apollo.loading ? 'bg-gray-500' : [colorMap500[this.board.color]] :
+                this.$apollo.loading ? 'bg-gray-500' : [colorMap500[this.board?.color || "red"]] :
                 'bg-green-500'
 
         },
