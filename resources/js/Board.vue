@@ -5,7 +5,7 @@
                 <div class="ml-2 w-1/3">
                     <user-board-drop-down v-if="isLogin"></user-board-drop-down>
                 </div>
-                <div class="text-lg opacity-50 cursor-pointer hover:opacity-75">Laravello</div>
+                <router-link :to="{name: 'home'}" class="text-lg opacity-50 cursor-pointer hover:opacity-75">Laravello</router-link>
                 <div class="mr-2 w-1/3 text-right">
                     <div v-if="isLogin" class="flex items-center justify-end">
                     <span>
@@ -21,7 +21,7 @@
                     </div>
                 </div>
             </div>
-            <div class="h-full flex flex-col flex-1">
+            <div class="h-full flex flex-col flex-1" v-if="!isHomeRoute && isLogin">
                 <div class="mx-4 mb-2 text-white font-bold text-lg">
                     <span v-if="$apollo.queries.board.loading">Loading...</span>
                     <span v-else>{{ board.title }}</span>
@@ -61,13 +61,22 @@ export default {
                 return {
                     id: parseInt(this.$route.params.id)
                 }
+            },
+            skip(){
+                return this.isHomeRoute
             }
         }
     },
     computed: {
+        isHomeRoute(){
+            return this.$route.name == 'home'
+        },
         bgColor() {
             console.log('board', this.board)
-            return this.$apollo.loading ? 'bg-gray-500' : [colorMap500[this.board.color]]
+            return !this.isHomeRoute ?
+                this.$apollo.loading ? 'bg-gray-500' : [colorMap500[this.board.color]] :
+                'bg-green-500'
+
         },
         colorMap100: () => colorMap100,
         colorMap200: () => colorMap200,

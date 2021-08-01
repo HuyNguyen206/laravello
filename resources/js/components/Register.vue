@@ -60,7 +60,7 @@ export default {
                 this.$store.dispatch('setLogin', true)
                 this.errors = []
                 this.$store.dispatch('setLogin', true)
-                this.$router.push({name: 'board'})
+                this.$router.push({name: 'home'})
 
             } catch (err) {
                 this.errors = gqlErrors(err)

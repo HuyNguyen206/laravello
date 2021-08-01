@@ -6778,13 +6778,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return {
           id: parseInt(this.$route.params.id)
         };
+      },
+      skip: function skip() {
+        return this.isHomeRoute;
       }
     }
   },
   computed: _objectSpread({
+    isHomeRoute: function isHomeRoute() {
+      return this.$route.name == 'home';
+    },
     bgColor: function bgColor() {
       console.log('board', this.board);
-      return this.$apollo.loading ? 'bg-gray-500' : [_ultils__WEBPACK_IMPORTED_MODULE_7__["colorMap500"][this.board.color]];
+      return !this.isHomeRoute ? this.$apollo.loading ? 'bg-gray-500' : [_ultils__WEBPACK_IMPORTED_MODULE_7__["colorMap500"][this.board.color]] : 'bg-green-500';
     },
     colorMap100: function colorMap100() {
       return _ultils__WEBPACK_IMPORTED_MODULE_7__["colorMap100"];
@@ -7624,7 +7630,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
                 _this.$router.push({
-                  name: 'board'
+                  name: 'home'
                 });
 
                 console.log(user);
@@ -7789,7 +7795,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this.$store.dispatch('setLogin', true);
 
                 _this.$router.push({
-                  name: 'board'
+                  name: 'home'
                 });
 
                 _context.next = 14;
@@ -49077,9 +49083,10 @@ var render = function() {
           ),
           _vm._v(" "),
           _c(
-            "div",
+            "router-link",
             {
-              staticClass: "text-lg opacity-50 cursor-pointer hover:opacity-75"
+              staticClass: "text-lg opacity-50 cursor-pointer hover:opacity-75",
+              attrs: { to: { name: "home" } }
             },
             [_vm._v("Laravello")]
           ),
@@ -49128,36 +49135,45 @@ var render = function() {
                   1
                 )
           ])
-        ]
+        ],
+        1
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "h-full flex flex-col flex-1" }, [
-        _c("div", { staticClass: "mx-4 mb-2 text-white font-bold text-lg" }, [
-          _vm.$apollo.queries.board.loading
-            ? _c("span", [_vm._v("Loading...")])
-            : _c("span", [_vm._v(_vm._s(_vm.board.title))])
-        ]),
-        _vm._v(" "),
-        !_vm.$apollo.queries.board.loading
-          ? _c(
+      !_vm.isHomeRoute && _vm.isLogin
+        ? _c("div", { staticClass: "h-full flex flex-col flex-1" }, [
+            _c(
               "div",
-              { staticClass: "flex flex-1 items-start overflow-x-auto mx-2" },
+              { staticClass: "mx-4 mb-2 text-white font-bold text-lg" },
               [
-                _vm._l(_vm.board.cardLists, function(cardList, index) {
-                  return _c("list", {
-                    key: index,
-                    attrs: { cardList: cardList }
-                  })
-                }),
-                _vm._v(" "),
-                _c("list-add-editor", {
-                  attrs: { boardId: _vm.$route.params.id }
-                })
-              ],
-              2
-            )
-          : _vm._e()
-      ])
+                _vm.$apollo.queries.board.loading
+                  ? _c("span", [_vm._v("Loading...")])
+                  : _c("span", [_vm._v(_vm._s(_vm.board.title))])
+              ]
+            ),
+            _vm._v(" "),
+            !_vm.$apollo.queries.board.loading
+              ? _c(
+                  "div",
+                  {
+                    staticClass: "flex flex-1 items-start overflow-x-auto mx-2"
+                  },
+                  [
+                    _vm._l(_vm.board.cardLists, function(cardList, index) {
+                      return _c("list", {
+                        key: index,
+                        attrs: { cardList: cardList }
+                      })
+                    }),
+                    _vm._v(" "),
+                    _c("list-add-editor", {
+                      attrs: { boardId: _vm.$route.params.id }
+                    })
+                  ],
+                  2
+                )
+              : _vm._e()
+          ])
+        : _vm._e()
     ])
   ])
 }
@@ -70381,6 +70397,10 @@ var routes = [{
   path: '/board/:id',
   component: _Board__WEBPACK_IMPORTED_MODULE_3__["default"],
   name: 'board'
+}, {
+  path: '/',
+  component: _Board__WEBPACK_IMPORTED_MODULE_3__["default"],
+  name: 'home'
 }];
 /* harmony default export */ __webpack_exports__["default"] = (new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: routes,

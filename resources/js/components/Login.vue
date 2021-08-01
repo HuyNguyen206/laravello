@@ -46,7 +46,7 @@ export default {
                this.$store.dispatch('setAuthUser', user.data.login)
                this.$store.dispatch('setLogin', true)
                // this.$store.commit('setLogin', true)
-               this.$router.push({name: 'board'})
+               this.$router.push({name: 'home'})
                console.log(user)
            }catch (err){
                console.log(err.graphQLErrors)
