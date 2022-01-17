@@ -47,6 +47,7 @@ input addCardInput{
 #}
 type User {
     id: ID!
+#    name_user: String! @rename(attribute: "name")
     name: String!
     email: String!
     created_at: DateTime!

@@ -21,15 +21,18 @@ class DatabaseSeeder extends Seeder
             'email' => 'huy@gmail.com'
         ]);
         factory(User::class, 10)->create();
-        $board1 = Board::create([
-            'title' => 'Groceries', 'color' => 'green', 'user_id' => User::pluck('id')->random()
-        ]);
-        $board2 = Board::create([
-            'title' => 'Housework', 'color' => 'yellow', 'user_id' => User::pluck('id')->random()
-        ]);
-        $board3 = Board::create([
-            'title' => 'Job', 'color' => 'indigo', 'user_id' => User::pluck('id')->random()
-        ]);
+        [$board1, $board2, $board3] = Board::withoutEvents(function () {
+            $board1 = factory(Board::class)->create([
+                'title' => 'Groceries', 'color' => 'green', 'user_id' => User::pluck('id')->random()
+            ]);
+            $board2 =  factory(Board::class)->create([
+                'title' => 'Housework', 'color' => 'yellow', 'user_id' => User::pluck('id')->random()
+            ]);
+            $board3 =  factory(Board::class)->create([
+                'title' => 'Job', 'color' => 'indigo', 'user_id' => User::pluck('id')->random()
+            ]);
+            return [$board1, $board2, $board3];
+        });
 
         collect([$board1, $board2, $board3])->each(function (Board $board) {
 //           $board->cardLists()->saveMany([
