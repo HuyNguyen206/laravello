@@ -67727,7 +67727,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var apolloClient = new apollo_boost__WEBPACK_IMPORTED_MODULE_1__["default"]({
-  uri: "http://laravello.com/graphql",
+  uri: "http://127.0.0.1:8000/graphql",
   headers: {
     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
   },
@@ -70690,8 +70690,8 @@ var store = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\laragon\www\laravello\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\laragon\www\laravello\resources\css\app.css */"./resources/css/app.css");
+__webpack_require__(/*! /home/le-huy-nguyen/Projects/Personal/laravello/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/le-huy-nguyen/Projects/Personal/laravello/resources/css/app.css */"./resources/css/app.css");
 
 
 /***/ })

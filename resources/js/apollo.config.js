@@ -4,7 +4,7 @@ import VueApollo from 'vue-apollo'
 import store from './vuex.config'
 import {gqlErrors, AuthError} from './ultils.js'
 const apolloClient = new ApolloClient({
-    uri:"http://laravello.com/graphql",
+    uri:"http://127.0.0.1:8000/graphql",
     headers: {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
     },
